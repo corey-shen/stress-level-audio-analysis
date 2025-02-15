@@ -49,7 +49,7 @@ const AudioRecorder = () => {
     formData.append("file", audioBlob, "recording.wav"); // Create a FormData object 
 
     try {
-      const response = await axios.post("http://localhost:5000/upload", formData, {
+      const response = await axios.post("http://127.0.0.1:8000/process_audio", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       console.log("Upload successful:", response.data);
