@@ -41,7 +41,7 @@ const AudioRecorder = () => {
     }
   };
 
-  // Upload Audio to Flask Backend
+  // Upload Audio to Backend
   const uploadAudio = async () => {
     if (!audioBlob) return alert("No audio recorded!");
 
@@ -49,9 +49,7 @@ const AudioRecorder = () => {
     formData.append("file", audioBlob, "recording.wav"); // Create a FormData object 
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/process_audio", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const response = await axios.post("http://127.0.0.1:8000/process_audio", formData);
       console.log("Upload successful:", response.data);
       alert("Upload successful!");
     } catch (error) {
