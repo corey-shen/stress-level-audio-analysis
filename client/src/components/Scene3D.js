@@ -12,7 +12,7 @@ const testData = {
     valence: [0.2811, 0.4389, 0.3126, 0.513, 0.693, 0.346, 0.1785, 0.2195, 0.1624, 0.2003],
     stress: [0.9495, 0.316, 0.6812, 0.3339, 0.3416, 0.1309, 0.033, 0.2171, 0.8934, 0.7807],
     three_d: [
-        [0.21, 0.2811, 1.0],
+        [0.1, 0.2811, 1.0],
         [0.5887, 0.389, 0.5623],
         [0.7914, 0.3126, 0.8391],
         [0.169, 0.513, 0.587],
@@ -25,12 +25,13 @@ const testData = {
     ]
 };
 
-function AxisVisualization() {
+function AxisVisualization({ zoom }) {
   const meshRef = useRef()
   const isClicking = useRef(false)
   const previousMousePosition = useRef({ x: 0, y: 0 })
   const rotationMode = useRef('default')
   const zoomLevel = useRef(50)
+  const [isRotating, setIsRotating] = useState(false)
 
   // Define color stops for the rainbow gradient
   const colorStops = [
@@ -94,6 +95,12 @@ function AxisVisualization() {
     }
   `;
 
+  useFrame(() => {
+    if (isRotating && meshRef.current) {
+      meshRef.current.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), 0.002)
+    }
+  })
+
   React.useEffect(() => {
     const handleMouseMove = (e) => {
       if (!isClicking.current) return
@@ -120,6 +127,7 @@ function AxisVisualization() {
     const handleKeyDown = (e) => {
       if (e.shiftKey) rotationMode.current = 'shift'
       if (e.altKey) rotationMode.current = 'alt'
+      if (e.key.toLowerCase() === 'r') setIsRotating(prev => !prev)
     }
 
     const handleKeyUp = () => {
@@ -143,6 +151,9 @@ function AxisVisualization() {
     isClicking.current = true
     previousMousePosition.current = { x: e.clientX, y: e.clientY }
   }
+
+  // Calculate dynamic font size based on zoom - linear scaling
+  const fontSize = 0.2  // Linear scaling relative to zoom level
 
   return (
     <group ref={meshRef} onPointerDown={handlePointerDown}>
@@ -182,98 +193,84 @@ function AxisVisualization() {
       {/* Corner Labels */}
       <Text 
          position={[-2.5, -2.5, -2.5]} 
-         fontSize={0.2}
+         fontSize={fontSize}
          color="black"
          anchorX="right"
          anchorY="bottom"
          renderOrder={6}
          depthTest={false}
-         outlineWidth={0.005}
-         outlineColor="#FFFFFF"
       >
         Sad
       </Text>
 
       <Text 
         position={[2.5, -2.5, -2.5]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Relieved
       </Text>
 
       <Text 
         position={[-2.5, 2.5, -2.5]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Angry
       </Text>
 
       <Text 
         position={[-2.5, -2.5, 2.5]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Dejected
       </Text>
 
       <Text 
         position={[2.5, 2.5, -2.5]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Elated
       </Text>
 
       <Text 
         position={[2.5, -2.5, 2.5]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Over-confident
       </Text>
 
       <Text 
         position={[-2.5, 2.5, 2.5]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Anxious
       </Text>
@@ -281,28 +278,24 @@ function AxisVisualization() {
       {/* New Alerted label at midpoint */}
       <Text 
         position={[0, 2.5, 2.5]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Alerted
       </Text>
 
       <Text 
         position={[2.5, 2.5, 2.5]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Excited
       </Text>
@@ -310,14 +303,12 @@ function AxisVisualization() {
       {/* New Enjoying label between Elated and Excited */}
       <Text 
         position={[2.5, 2.5, 0]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Enjoying
       </Text>
@@ -325,14 +316,12 @@ function AxisVisualization() {
       {/* New Surprised label between Elated and Angry */}
       <Text 
         position={[0, 2.5, -2.5]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Surprised
       </Text>
@@ -340,14 +329,12 @@ function AxisVisualization() {
       {/* New Distressed label between Angry and Anxious */}
       <Text 
         position={[-2.5, 2.5, 0]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Distressed
       </Text>
@@ -355,14 +342,12 @@ function AxisVisualization() {
       {/* New Pessimistic label between Anxious and Dejected */}
       <Text 
         position={[-2.5, 0, 2.5]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Pessimistic
       </Text>
@@ -370,14 +355,12 @@ function AxisVisualization() {
       {/* New Deceived label between Sad and Angry */}
       <Text 
         position={[-2.5, 0, -2.5]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Deceived
       </Text>
@@ -385,14 +368,12 @@ function AxisVisualization() {
       {/* New Optimistic label between Excited and Overconfident */}
       <Text 
         position={[2.5, 0, 2.5]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Optimistic
       </Text>
@@ -400,14 +381,12 @@ function AxisVisualization() {
       {/* New Satisfied label between Elated and Relieved */}
       <Text 
         position={[2.5, 0, -2.5]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Satisfied
       </Text>
@@ -415,14 +394,12 @@ function AxisVisualization() {
       {/* New Calm label between Dejected and Overconfident */}
       <Text 
         position={[0, -2.5, 2.5]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Calm
       </Text>
@@ -430,14 +407,12 @@ function AxisVisualization() {
       {/* New Relaxed label between Overconfident and Relieved */}
       <Text 
         position={[2.5, -2.5, 0]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Relaxed
       </Text>
@@ -445,14 +420,12 @@ function AxisVisualization() {
       {/* New Fatigued label between Sad and Relieved */}
       <Text 
         position={[0, -2.5, -2.5]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Fatigued
       </Text>
@@ -460,14 +433,12 @@ function AxisVisualization() {
       {/* New Bored label between Sad and Dejected */}
       <Text 
         position={[-2.5, -2.5, 0]} 
-        fontSize={0.2}
+        fontSize={fontSize}
         color="black"
         anchorX="right"
         anchorY="bottom"
         renderOrder={6}
         depthTest={false}
-        outlineWidth={0.005}
-        outlineColor="#FFFFFF"
       >
         Bored
       </Text>
@@ -584,30 +555,26 @@ function AxisVisualization() {
           />
         </mesh>
         
-        {/* Legend Labels */}
+        {/* Legend Labels - front only */}
         <Text
-          position={[0.3, 1.2, 0]}
-          fontSize={0.2}
+          position={[0.3, 1.2, 0.05]}
+          fontSize={fontSize}  // Using the same fontSize calculation as other labels
           color="#000000"
           anchorX="left"
           anchorY="middle"
-          renderOrder={6}
-          depthTest={false}
-          outlineWidth={0.005}
-          outlineColor="#FFFFFF"
+          renderOrder={1}
+          depthTest={true}
         >
           t=1
         </Text>
         <Text
-          position={[0.3, -1.2, 0]}
-          fontSize={0.2}
+          position={[0.3, -1.2, 0.05]}
+          fontSize={fontSize}  // Using the same fontSize calculation as other labels
           color="#000000"
           anchorX="left"
           anchorY="middle"
-          renderOrder={6}
-          depthTest={false}
-          outlineWidth={0.005}
-          outlineColor="#FFFFFF"
+          renderOrder={1}
+          depthTest={true}
         >
           t=0
         </Text>
@@ -617,15 +584,7 @@ function AxisVisualization() {
 }
 
 function Scene3D() {
-  const [zoom, setZoom] = useState(50)
-
-  const handleWheel = (e) => {
-    e.preventDefault()
-    setZoom(prevZoom => {
-      const newZoom = prevZoom - e.deltaY * 0.1
-      return Math.min(Math.max(newZoom, 20), 100)
-    })
-  }
+  const zoom = 40  // Fixed zoom value
 
   return (
     <div 
@@ -637,12 +596,11 @@ function Scene3D() {
         boxShadow: '0 0 10px rgba(52, 152, 219, 0.3)',
         overflow: 'hidden'
       }}
-      onWheel={handleWheel}
     >
       <Canvas 
         orthographic 
         camera={{ 
-          position: [7.5, 7.5, 7.5],  // Changed y coordinate to 7.5 to rotate 90 degrees CCW
+          position: [7.5, 7.5, 7.5],
           zoom: zoom,
           near: 0.1,
           far: 1000
@@ -650,7 +608,7 @@ function Scene3D() {
       >
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
-        <AxisVisualization />
+        <AxisVisualization zoom={zoom} />
       </Canvas>
     </div>
   )
