@@ -1,70 +1,40 @@
-# Getting Started with Create React App
+## Inspiration
+In a world where stress and anxiety are increasingly prevalent, we were inspired to create a tool that not only helps individuals understand their emotional states, but also empowers them to take control of their mental well-being. Mood and Metrics was born out of a desire to bridge the gap between technology and emotional health, offering a way for people to easily visualize and comprehend their emotional levels through AI-driven insights.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## What it does 
+Mood and Metrics offers three analysis modalities:
+- Audio Analysis: Utilizes a locally deployed audio sentiment analysis model to capture arousal, valence, and dominance values to map them onto a stress score scale
+- Video Analysis: Sends a video clip to Gemini, and evaluates calm/stress levels and in-depth text reasoning analysis through facial expression data
+- Transcription Analysis: Performs sentiment analysis on video transcription data, evaluating calm/stress levels and in-depth text reasoning analysis
+- For all modalities, data is visualized in 2D or 3D
 
-## Available Scripts
+## How we built it
+- Utilized a state-of-the-art fine-tuned wav2vec2 transformer architecture (https://arxiv.org/abs/2203.07378) for audio sentiment analysis via Hugging Face and Pytorch
+- Leveraged three.js to create an interactable 3D graph to map valence, dominance, and arousal
+- Mapped emotion using a theoretical approach based on a tri-dimensional
+model of core affect and emotion concepts (https://www.redalyc.org/pdf/3111/311126297005.pdf)
+- Integrated Google’s Gemini AI API for video-based and transcription-based mood analysis.
+- Developed a React frontend with an interactive UI
 
-In the project directory, you can run:
+## Challenges we ran into
+- Locally installing transformer model via Hugging Face and Pytorch, and allowing GPU cuda acceleration
+- Extrapolating accurate stress score from arousal, valence, and dominance values
+- Getting the axis and rotation from the camera perspective to match for 3D visualizations
+- Constructing a pipeline to send video footage to Gemini via an API call
+- Creating a clean frontend to visualize graphs using data from the backend server
 
-### `npm start`
+## Accomplishments that we're proud of
+- Successfully integrating AI-driven audio, video, and transcription sentiment analysis
+- Creating an engaging and informational visualization of emotional/mood states
+- Achieving reliable stress detection for educational, healthcare, and meditational use
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## What we learned 
+- The nuances of valence, dominance, and arousal in audio sentiment analysis
+- Balancing technicality and simplicity in data visualization
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## What's next for Moods and Weights
+- Enhancing AI models with more modalities such as heartbeat, EKG signals, etc.
+- Collecting accurate breathing audio to stress score data and training the model from scratch
+- Adding real-time video analysis without needing pre-recorded clips
+- Expanding features with personalized stress relief suggestions
+- Deploying a mobile version for on-the-go, fully local emotional tracking
