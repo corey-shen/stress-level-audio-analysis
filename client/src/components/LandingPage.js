@@ -12,9 +12,15 @@ function LandingPage() {
           <button className="landing-button" onClick={() => window.location.href = '/audio'}>
             🎵 Audio Processing
           </button>
+          
           <button className="landing-button" onClick={() => window.location.href = '/video'}>
             🎥 Video Processing
           </button>
+
+          <button className="landing-button" onClick={() => window.location.href = '/transcript'}>
+            . Transcript Processing
+          </button>
+          
         </div>
       </div>
     </div>
