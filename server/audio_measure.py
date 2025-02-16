@@ -93,25 +93,19 @@ def process_func(
 
     return y
 
-def process_audio(audio, chunk_size_ms, sampling_rate):
-    """Process audio by chunking
+def process_audio(audio, num_chunks, sampling_rate):
+    """Process audio by splitting into equal chunks
     
     Args:
         audio (numpy.ndarray): Input audio data
-        chunk_size_ms (int): Duration of each chunk in milliseconds
+        num_chunks (int): Number of equal-sized chunks to split audio into
         sampling_rate (int): Sampling rate of audio 
         
     Returns:
         list: List of audio chunks
     """
-    # Convert chunk duration from ms to seconds
-    chunk_dur_sec = chunk_size_ms / 1000.0
-    
-    # Calculate samples per chunk
-    chunk_samples = int(sampling_rate * chunk_dur_sec)
-    
-    # Split audio into chunks
-    num_chunks = len(audio) // chunk_samples
+    # Calculate samples per chunk based on total length
+    chunk_samples = len(audio) // num_chunks
     chunks = []
     
     print("Chunking audio...")
@@ -123,17 +117,18 @@ def process_audio(audio, chunk_size_ms, sampling_rate):
     
     return chunks
 
-def process_file(audio_path, chunk_size_ms, alpha, beta, gamma):
+def process_file(audio_path, num_chunks, alpha, beta, gamma):
     """Process an audio file and return array of stress values
     
     Args:
         audio_path (str): Path to audio file
-        chunk_size_ms (int): Size of chunks in milliseconds
+        num_chunks (int): Number of equal-sized chunks to split audio into
         alpha (float): Weight for arousal in stress calculation
         beta (float): Weight for valence in stress calculation
+        gamma (float): Emphasis factor for stress calculation
         
     Returns:
-        list: Array of stress values
+        dict: Dictionary containing arrays of emotion values
     """
     print("Loading audio file...")
     # Load audio file using soundfile with tqdm
@@ -163,7 +158,7 @@ def process_file(audio_path, chunk_size_ms, alpha, beta, gamma):
         sr = 16000
     print(f"New sample rate: {sr}")
     
-    chunks = process_audio(audio, chunk_size_ms, sr)
+    chunks = process_audio(audio, num_chunks, sr)
 
     arousal_values = []
     dominance_values = []
@@ -203,7 +198,7 @@ def process_file(audio_path, chunk_size_ms, alpha, beta, gamma):
 def main():
     parser = argparse.ArgumentParser(description='Process audio file for stress analysis')
     parser.add_argument('--audio_path', type=str, required=True, help='Path to audio file')
-    parser.add_argument('--chunk_size_ms', type=int, default=1000, help='Size of chunks in milliseconds, minimum is 25')
+    parser.add_argument('--chunks', type=int, default=10, help='Number of equal-sized chunks to split audio into')
     parser.add_argument('--alpha', type=float, default=10, help='Weight for arousal in stress calculation')
     parser.add_argument('--beta', type=float, default=1, help='Weight for valence in stress calculation')
     parser.add_argument('--gamma', type=float, default=2, help='Emphasis factor for stress calculation')
@@ -211,7 +206,7 @@ def main():
     args = parser.parse_args()
     
     # Process file and get stress values
-    stress_values = process_file(args.audio_path, args.chunk_size_ms, args.alpha, args.beta, args.gamma)
+    stress_values = process_file(args.audio_path, args.chunks, args.alpha, args.beta, args.gamma)
     print(stress_values)
     return stress_values
 
