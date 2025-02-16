@@ -2,23 +2,23 @@ import React, { useState, useRef } from "react";
 import axios from "axios";
 
 const AudioRecorder = () => {
-  const [recording, setRecording] = useState(false); // Bool for tracking if recording is in progress
-  const [audioBlob, setAudioBlob] = useState(null);  // Stores the recorded audio as a binary object
-  const [audioURL, setAudioURL] = useState(null);    // Stores a URL to play the recorded audio
-  const mediaRecorderRef = useRef(null);             // Reference to MediaRecorder object
-  const audioChunksRef = useRef([]);                 // Stores small chunks of recorded audio data
+  const [recording, setRecording] = useState(false); // Track if recording is active
+  const [audioBlob, setAudioBlob] = useState(null);  // Store recorded audio
+  const [audioURL, setAudioURL] = useState(null);    // Store audio playback URL
+  const mediaRecorderRef = useRef(null);             // Reference to MediaRecorder
+  const audioChunksRef = useRef([]);                 // Store recorded audio chunks
 
-  // Start Recording
+  // 🎙 Start Recording
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); // Request microphone access
-      mediaRecorderRef.current = new MediaRecorder(stream); // Returns audio stream if microphone access is granted
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); // Request mic access
+      mediaRecorderRef.current = new MediaRecorder(stream);
 
       mediaRecorderRef.current.ondataavailable = (event) => {
-        audioChunksRef.current.push(event.data);    // Create a MediaRecorder object to record stream
+        audioChunksRef.current.push(event.data);
       };
 
-      mediaRecorderRef.current.onstop = () => { // Store audio in audioChunksRef
+      mediaRecorderRef.current.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
         const audioURL = URL.createObjectURL(audioBlob);
         setAudioBlob(audioBlob);
@@ -33,7 +33,7 @@ const AudioRecorder = () => {
     }
   };
 
-  // Stop Recording
+  // ⏹ Stop Recording
   const stopRecording = () => {
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
@@ -41,12 +41,12 @@ const AudioRecorder = () => {
     }
   };
 
-  // Upload Audio to Backend
+  // 📤 Upload Audio
   const uploadAudio = async () => {
     if (!audioBlob) return alert("No audio recorded!");
 
     const formData = new FormData();
-    formData.append("file", audioBlob, "recording.wav"); // Create a FormData object 
+    formData.append("file", audioBlob, "recording.wav");
 
     try {
       const response = await axios.post("http://127.0.0.1:8000/process_audio", formData);
@@ -61,14 +61,23 @@ const AudioRecorder = () => {
   return (
     <div>
       <h2>Audio Recorder</h2>
-      <button onClick={startRecording} disabled={recording}>
-        Start Recording
-      </button>
-      <button onClick={stopRecording} disabled={!recording}>
-        Stop Recording
-      </button>
-      {audioURL && <audio controls src={audioURL} />}
-      <button onClick={uploadAudio} disabled={!audioBlob}>
+
+      {/* Conditionally Render Buttons */}
+      {!recording ? (
+        <button onClick={startRecording} style={{ backgroundColor: "#4CAF50", color: "white" }}> 
+          Start Recording
+        </button>
+      ) : (
+        <button onClick={stopRecording} style={{ backgroundColor: "#ff4d4d", color: "white" }}>
+          Stop Recording
+        </button>
+      )}
+
+      {/* Audio Player */}
+      {audioURL && <audio controls src={audioURL} style={{ marginLeft: "10px" }} />}
+
+      {/* Upload Button */}
+      <button onClick={uploadAudio} disabled={!audioBlob} style={{ backgroundColor: "#dee2e6", color: "black", marginLeft: "10px" }}>
         Upload Audio
       </button>
     </div>
