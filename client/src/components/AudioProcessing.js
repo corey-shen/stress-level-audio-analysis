@@ -10,9 +10,8 @@ function AudioProcessing() {
 
   return (
     <div className="AudioProcessing">
-      {/* ✅ Move Home Icon to the Left */}
       <img
-        src="/homepage-image.png" /* Adjust path if using src/assets */
+        src="/homepage-image.png" 
         alt="Home"
         className="home-logo"
         onClick={() => navigate("/")}

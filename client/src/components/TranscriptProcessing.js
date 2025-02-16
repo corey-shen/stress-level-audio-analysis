@@ -167,7 +167,7 @@ function TranscriptProcessing() {
 
   return (
     <div>
-      <h2>Transcript Recording</h2>
+      <h2>Stress Level Analyzer via Transcript</h2>
         <div className="AudioProcessing">
           <img
             src="/homepage-image.png" /* Adjust path if using src/assets */
@@ -206,7 +206,7 @@ function TranscriptProcessing() {
             Stress over Time
             </h3>
             <p className="text-sm text-gray-600 mb-1">
-            A measure of tension and pressure experienced during speech
+            A measure of tension and pressure experienced using speech
             </p>
         </div>
                 

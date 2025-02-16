@@ -13,7 +13,6 @@ function App() {
             <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/audio" element={<AudioProcessing />} />
-
                 <Route path='/transcript' element={<TranscriptProcessing />} />
                 <Route path="/video" element={<VideoRecorder />} />
             </Routes>

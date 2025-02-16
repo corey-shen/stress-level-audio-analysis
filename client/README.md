@@ -1,3 +1,24 @@
+# Mood and Metrics
+## Team Members
+- Corey Shen
+- Ryota Sato
+- Parth Joshi
+- Dhruv Shah
+
+## Setup 
+Start in the root directory. 
+
+Go to client folder: ````cd client````
+
+Then proceed to run: ```` npm start ````
+
+Now proceed to server folder in a new terminal window: ````cd server````
+
+Start server by running: ````python main.py````
+
+Run the application locally via: ````http://localhost:3000/````
+
+
 ## Inspiration
 In a world where stress and anxiety are increasingly prevalent, we were inspired to create a tool that not only helps individuals understand their emotional states, but also empowers them to take control of their mental well-being. Mood and Metrics was born out of a desire to bridge the gap between technology and emotional health, offering a way for people to easily visualize and comprehend their emotional levels through AI-driven insights.
 

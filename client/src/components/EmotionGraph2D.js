@@ -115,21 +115,20 @@ const EmotionGraphs = ({emotionData}) => {
 
   return (
     <div className="container mx-auto">
-      <div className="text-center mb-6">
+      {emotionData?.stress && emotionData.stress.length > 0 && (
+        <div className="text-center mb-6">
         <h3 className="text-xl font-bold mb-2">
-          Stress over Time
+            Stress over Time
         </h3>
-        <p className="text-sm text-gray-600 mb-1">
-          A measure of tension and pressure experienced during speech
-        </p>
-        {/* <p className="text-sm text-gray-600">
-          [Click to {expanded ? 'collapse' : 'show all metrics'}]
-        </p> */}
+    <p className="text-sm text-gray-600 mb-1">
+      A measure of tension and pressure experienced using speech classification
+    </p>
         <button onClick={() => setExpanded(!expanded)} className="text-blue-600 hover:text-blue-800 text-sm">
-          {expanded ? 'Collapse' : 'Show All Metrics'}
+      {expanded ? 'Collapse' : 'Show All Metrics'}
         </button>
-      </div>
-            
+    </div>
+    )}
+   
       <div 
         onClick={() => setExpanded(!expanded)}
         className="cursor-pointer"

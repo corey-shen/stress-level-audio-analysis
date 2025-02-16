@@ -126,7 +126,7 @@ h3 {
 
 .home-logo {
   position: absolute;
-  top: 20px; /* Adjust as needed */
+  top: 20px; 
   left: 20px; /* Move it left */
   width: 80px; /* Adjust size */
   height: 80px;
@@ -137,4 +137,3 @@ h3 {
 .home-logo:hover {
   transform: scale(1.1); /* Slight zoom effect */
 }
-

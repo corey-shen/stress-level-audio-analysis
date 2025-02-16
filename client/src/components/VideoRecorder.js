@@ -2,8 +2,10 @@ import React, { useRef, useState, useEffect } from 'react';
 import Webcam from 'react-webcam';
 import axios from 'axios';
 import * as d3 from 'd3';
+import { useNavigate } from 'react-router-dom';
 
 const VideoRecorder = () => {
+  const navigate = useNavigate();
   const webcamRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const [isLive, setIsLive] = useState(false);
@@ -236,7 +238,16 @@ const VideoRecorder = () => {
   
   return (
     <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-      <h2>Video Recorder</h2>
+
+      <img
+        src="/homepage-image.png" 
+        alt="Home"
+        className="home-logo"
+        onClick={() => navigate("/")} 
+        style={{ cursor: "pointer", position: "absolute", top: "20px", left: "20px" }} 
+      />
+
+      <h2 style={{ textAlign: 'center', marginBottom: '1rem' }}>Video Stress Level Analyzer</h2>
       
       {/* Camera Preview */}
       <div style={{ 
@@ -339,7 +350,7 @@ const VideoRecorder = () => {
             Stress over Time
             </h3>
             <p className="text-sm text-gray-600 mb-1">
-            A measure of tension and pressure experienced during speech
+            Measure of tension and pressure experienced using facial recognition
             </p>
         </div>
                 
@@ -354,16 +365,16 @@ const VideoRecorder = () => {
             />
         </div>
         <div className="w-full border rounded-lg bg-white p-6">
-            <ul className="space-y-2">
+            <div className="space-y-2">
                 {keyMoments.map((moment, index) => (
-                <li key={index} className="flex items-start p-2 border-b last:border-b-0">
+                <div key={index} className="flex items-start p-2 border-b last:border-b-0">
                     <span className="font-bold mr-3 text-gray-600">
                     {index + 1}.
                     </span>
                     <span className="text-gray-700">{moment}</span>
-                </li>
+                </div>
                 ))}
-            </ul>
+            </div>
         </div>
     </div>
     </div>

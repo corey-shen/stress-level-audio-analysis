@@ -18,7 +18,7 @@ function LandingPage() {
           </button>
 
           <button className="landing-button" onClick={() => window.location.href = '/transcript'}>
-            . Transcript Processing
+            📝 Transcript Processing
           </button>
           
         </div>
