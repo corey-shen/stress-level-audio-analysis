@@ -97,7 +97,7 @@ function AxisVisualization({ zoom }) {
 
   useFrame(() => {
     if (isRotating && meshRef.current) {
-      meshRef.current.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), 0.002)
+      meshRef.current.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), 0.001)
     }
   })
 
@@ -584,19 +584,10 @@ function AxisVisualization({ zoom }) {
 }
 
 function Scene3D() {
-  const zoom = 40  // Fixed zoom value
+  const zoom = 60  // Fixed zoom value
 
   return (
-    <div 
-      style={{ 
-        width: '100%', 
-        height: '400px',
-        border: '2px solid #3498db',
-        borderRadius: '8px',
-        boxShadow: '0 0 10px rgba(52, 152, 219, 0.3)',
-        overflow: 'hidden'
-      }}
-    >
+    <div className="three-d-graph-container">
       <Canvas 
         orthographic 
         camera={{ 
