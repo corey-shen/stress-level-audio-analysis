@@ -9,6 +9,7 @@ from transformers.models.wav2vec2.modeling_wav2vec2 import (
 import soundfile as sf
 import argparse
 import librosa
+from tqdm import tqdm
 
 
 class RegressionHead(nn.Module):
@@ -59,7 +60,11 @@ class EmotionModel(Wav2Vec2PreTrainedModel):
         return hidden_states, logits
 
 # load model from hub
-device = 'cpu'
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    print(f"Using GPU: {torch.cuda.get_device_name()}")
+else:
+    print("Using CPU")
 model_name = 'audeering/wav2vec2-large-robust-12-ft-emotion-msp-dim'
 processor = Wav2Vec2Processor.from_pretrained(model_name)
 model = EmotionModel.from_pretrained(model_name).to(device)
@@ -109,7 +114,8 @@ def process_audio(audio, chunk_size_ms, sampling_rate):
     num_chunks = len(audio) // chunk_samples
     chunks = []
     
-    for i in range(num_chunks):
+    print("Chunking audio...")
+    for i in tqdm(range(num_chunks)):
         start = i * chunk_samples
         end = start + chunk_samples
         chunk = audio[start:end]
@@ -129,29 +135,75 @@ def process_file(audio_path, chunk_size_ms, alpha, beta, gamma):
     Returns:
         list: Array of stress values
     """
-    # Load audio file using soundfile instead of librosa
-    audio, sr = sf.read(audio_path)
+    print("Loading audio file...")
+    # Load audio file using soundfile with tqdm
+    with sf.SoundFile(audio_path) as f:
+        frames = len(f)
+        channels = f.channels
+        with tqdm(total=frames, desc="Reading audio") as pbar:
+            audio = np.zeros(frames, dtype=np.float32)  # Pre-allocate array for one channel
+            pos = 0
+            block_size = 10000
+            while pos < frames:
+                chunk = f.read(block_size)
+                if not len(chunk):
+                    break
+                # If stereo, take the first channel
+                if channels > 1:
+                    chunk = chunk[:, 0]
+                audio[pos:pos + len(chunk)] = chunk  # Direct assignment to array
+                pos += len(chunk)
+                pbar.update(len(chunk))
+    
+    sr = f.samplerate
+    print(f"Original sample rate: {sr}")
     if sr != 16000:
+        print("Resampling audio to 16kHz...")
         audio = librosa.resample(audio, orig_sr=sr, target_sr=16000)
         sr = 16000
+    print(f"New sample rate: {sr}")
     
     chunks = process_audio(audio, chunk_size_ms, sr)
 
+    arousal_values = []
+    dominance_values = []
+    valence_values = []
     stress_values = []
-    for chunk in chunks:
+    three_d_values = []
+    
+    print("Processing chunks...")
+    for chunk in tqdm(chunks):
         results = process_func(chunk.reshape(1, -1), sr)[0]
+        results = np.clip(results, 0, 1)   # clip
         stress = (alpha * results[0] + beta * (1 - results[2])) / (alpha + beta)
         # Apply gamma
         stress = stress ** gamma
-        # Convert numpy float32 to regular Python float
-        stress_values.append(round(float(stress), 2))
+        # Get the data values
+        arousal = round(float(results[0]), 4)
+        dominance = round(float(results[1]), 4)
+        valence = round(float(results[2]), 4)
+        stress = round(float(stress), 4)
+
+        arousal_values.append(arousal)
+        dominance_values.append(dominance)
+        valence_values.append(valence)
+        stress_values.append(stress)
+        three_d_values.append((dominance, valence, arousal))
     
-    return stress_values
+    dictionary = {}
+
+    dictionary["arousal"] = arousal_values
+    dictionary["dominance"] = dominance_values
+    dictionary["valence"] = valence_values
+    dictionary["stress"] = stress_values
+    dictionary["three_d"] = three_d_values
+
+    return dictionary
 
 def main():
     parser = argparse.ArgumentParser(description='Process audio file for stress analysis')
     parser.add_argument('--audio_path', type=str, required=True, help='Path to audio file')
-    parser.add_argument('--chunk_size_ms', type=int, default=1000, help='Size of chunks in milliseconds')
+    parser.add_argument('--chunk_size_ms', type=int, default=1000, help='Size of chunks in milliseconds, minimum is 25')
     parser.add_argument('--alpha', type=float, default=10, help='Weight for arousal in stress calculation')
     parser.add_argument('--beta', type=float, default=1, help='Weight for valence in stress calculation')
     parser.add_argument('--gamma', type=float, default=2, help='Emphasis factor for stress calculation')
