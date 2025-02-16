@@ -3,8 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+<<<<<<< Updated upstream
     "@react-three/drei": "^9.80.1",
     "@react-three/fiber": "^8.13.5",
+=======
+    "@react-three/drei": "9.92.7",
+    "@react-three/fiber": "8.15.12",
+>>>>>>> Stashed changes
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
@@ -15,7 +20,11 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.1.5",
     "react-scripts": "5.0.1",
+<<<<<<< Updated upstream
     "three": "^0.154.0",
+=======
+    "three": "0.159.0",
+>>>>>>> Stashed changes
     "web-vitals": "^2.1.4"
   },
   "scripts": {

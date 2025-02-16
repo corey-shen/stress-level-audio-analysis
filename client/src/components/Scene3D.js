@@ -12,16 +12,16 @@ const testData = {
     valence: [0.2811, 0.4389, 0.3126, 0.513, 0.693, 0.346, 0.1785, 0.2195, 0.1624, 0.2003],
     stress: [0.9495, 0.316, 0.6812, 0.3339, 0.3416, 0.1309, 0.033, 0.2171, 0.8934, 0.7807],
     three_d: [
-        [0.9571, 0.2811, 1.0],
-        [0.5887, 0.4389, 0.5623],
+        [0.21, 0.2811, 1.0],
+        [0.5887, 0.389, 0.5623],
         [0.7914, 0.3126, 0.8391],
-        [0.5969, 0.513, 0.587],
-        [0.597, 0.693, 0.6122],
-        [0.4325, 0.346, 0.3325],
-        [0.2521, 0.1785, 0.1177],
-        [0.5236, 0.2195, 0.4345],
-        [0.9302, 0.1624, 0.956],
-        [0.9012, 0.2003, 0.8919]
+        [0.169, 0.513, 0.587],
+        [0.697, 0.693, 0.6122],
+        [0.2325, 0.346, 0.3325],
+        [0.2521, 0.7785, 0.1177],
+        [0.5236, 0.2195, 0.1345],
+        [0.9302, 0.1624, 0.456],
+        [0.1012, 0.2003, 0.8919]
     ]
 };
 
@@ -53,18 +53,18 @@ function AxisVisualization() {
   // Create a smooth curve through all points with increased curvature
   const curve = new THREE.CatmullRomCurve3(
     points.map(point => new THREE.Vector3(...point)),
-    false, // changed to false to not close the curve
-    'centripetal', // catmullRom type: 'centripetal' gives more pronounced curves
-    0.8 // tension: higher values (0-1) make the curve more pronounced
+    false,
+    'catmullrom', // changed from 'centripetal' for smoother curve
+    0.5 // reduced tension for smoother curve
   );
 
-  // Create the tube geometry (simpler now, no need for color attribute)
+  // Increase number of segments and reduce radius for smoother appearance
   const tubeGeometry = new THREE.TubeGeometry(
     curve,
-    100,  // segments
-    0.03, // radius
-    8,    // radial segments
-    false // closed
+    200,  // increased segments for smoother curve
+    0.02, // reduced radius
+    12,   // increased radial segments
+    false
   );
 
   const vertexShader = `
@@ -472,7 +472,7 @@ function AxisVisualization() {
         Bored
       </Text>
 
-      {/* Points - colored spheres */}
+      {/* Points and tube segments section - replace the existing mapping with this */}
       {points.map((point, index) => {
         // Calculate color based on position in sequence
         const t = index / (points.length - 1);
@@ -490,86 +490,27 @@ function AxisVisualization() {
 
         return (
           <mesh key={index} position={point}>
-            <sphereGeometry args={[0.07]} />
+            <sphereGeometry args={[0.05]} /> {/* Reduced sphere size */}
             <meshStandardMaterial 
               color={color} 
               emissive={color} 
-              emissiveIntensity={1}
+              emissiveIntensity={0.8} // Reduced intensity
             />
           </mesh>
         );
       })}
 
-      {/* Create individual tube segments between points */}
-      {points.map((point, index) => {
-        if (index === points.length - 1) return null; // Skip the last point as it won't have a next point
-
-        // Get colors for current and next point
-        const t1 = index / (points.length - 1);
-        const t2 = (index + 1) / (points.length - 1);
-        
-        // Calculate colors for both points
-        const getPointColor = (t) => {
-          const colorIndex = t * (colorStops.length - 1);
-          const lowerIndex = Math.floor(colorIndex);
-          const upperIndex = Math.min(lowerIndex + 1, colorStops.length - 1);
-          const fraction = colorIndex - lowerIndex;
-          
-          const color = new THREE.Color();
-          color.lerpColors(
-            colorStops[lowerIndex],
-            colorStops[upperIndex],
-            fraction
-          );
-          return color;
-        };
-
-        const startColor = getPointColor(t1);
-        const endColor = getPointColor(t2);
-
-        // Create a curve for this segment
-        const segmentCurve = new THREE.CatmullRomCurve3([
-          new THREE.Vector3(...point),
-          new THREE.Vector3(...points[index + 1])
-        ]);
-
-        const tubeGeometry = new THREE.TubeGeometry(
-          segmentCurve,
-          20,  // segments
-          0.03, // radius
-          8,    // radial segments
-          false // closed
-        );
-
-        return (
-          <mesh key={`tube-${index}`}>
-            <primitive object={tubeGeometry} />
-            <shaderMaterial
-              vertexShader={`
-                varying vec2 vUv;
-                void main() {
-                  vUv = uv;
-                  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                }
-              `}
-              fragmentShader={`
-                varying vec2 vUv;
-                uniform vec3 startColor;
-                uniform vec3 endColor;
-                
-                void main() {
-                  vec3 color = mix(startColor, endColor, vUv.x);
-                  gl_FragColor = vec4(color, 1.0);
-                }
-              `}
-              uniforms={{
-                startColor: { value: startColor },
-                endColor: { value: endColor }
-              }}
-            />
-          </mesh>
-        );
-      })}
+      {/* Single continuous tube */}
+      <mesh>
+        <primitive object={tubeGeometry} />
+        <shaderMaterial
+          vertexShader={vertexShader}
+          fragmentShader={fragmentShader}
+          uniforms={{
+            colorStops: { value: colorStops }
+          }}
+        />
+      </mesh>
 
       {/* Add Time Legend */}
       <group position={[2.8, 0, -2.5]}>
