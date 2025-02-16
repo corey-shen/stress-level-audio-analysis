@@ -61,10 +61,10 @@ class EmotionModel(Wav2Vec2PreTrainedModel):
 
 # load model from hub
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# if torch.cuda.is_available():
-#     # print(f"Using GPU: {torch.cuda.get_device_name()}")
-# else:
-#     # print("Using CPU")
+if torch.cuda.is_available():
+    print(f"Using GPU: {torch.cuda.get_device_name()}")
+else:
+    print("Using CPU")
 model_name = 'audeering/wav2vec2-large-robust-12-ft-emotion-msp-dim'
 processor = Wav2Vec2Processor.from_pretrained(model_name)
 model = EmotionModel.from_pretrained(model_name).to(device)

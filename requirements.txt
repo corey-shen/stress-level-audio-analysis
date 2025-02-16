@@ -1,0 +1,13 @@
+fastapi
+pydub
+google-genai
+python-multipart
+uvicorn
+numpy
+--find-links https://download.pytorch.org/whl/cu118
+torch
+torchvision
+torchaudio
+transformers
+soundfile
+librosa
