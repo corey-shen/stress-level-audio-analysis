@@ -5,7 +5,8 @@ const testData = {
   arousal: [1.0, 0.5623, 0.8391, 0.587, 0.6122, 0.3325, 0.1177, 0.4345, 0.956, 0.8919],
   dominance: [0.9571, 0.5887, 0.7914, 0.5969, 0.597, 0.4325, 0.2521, 0.5236, 0.9302, 0.9012],
   valence: [0.2811, 0.4389, 0.3126, 0.513, 0.693, 0.346, 0.1785, 0.2195, 0.1624, 0.2003],
-  stress: [0.9495, 0.316, 0.6812, 0.3339, 0.3416, 0.1309, 0.033, 0.2171, 0.8934, 0.7807]
+  stress: [0.9495, 0.316, 0.6812, 0.3339, 0.3416, 0.1309, 0.033, 0.2171, 0.8934, 0.7807],
+  three_d: [(0.9571, 0.2811, 1.0), (0.5887, 0.4389, 0.5623), (0.7914, 0.3126, 0.8391), (0.5969, 0.513, 0.587), (0.597, 0.693, 0.6122), (0.4325, 0.346, 0.3325), (0.2521, 0.1785, 0.1177), (0.5236, 0.2195, 0.4345), (0.9302, 0.1624, 0.956), (0.9012, 0.2003, 0.8919)]
 };
 
 const EmotionGraphs = () => {
@@ -106,12 +107,18 @@ const EmotionGraphs = () => {
 
   return (
     <div className="container mx-auto">
-      <h3 className="text-xl font-bold text-center">
-        Stress over Time
-      </h3>
-      <p className="text-sm text-gray-600 text-center mb-4">
-        (Click to {expanded ? 'collapse' : 'show all metrics'})
-      </p>
+      <div className="text-center mb-6">
+        <h3 className="text-xl font-bold mb-2">
+          Stress over Time
+        </h3>
+        <p className="text-sm text-gray-600 mb-1">
+          A measure of tension and pressure experienced during speech
+        </p>
+        <p className="text-sm text-gray-600">
+          [Click to {expanded ? 'collapse' : 'show all metrics'}]
+        </p>
+      </div>
+            
       <div 
         onClick={() => setExpanded(!expanded)}
         className="cursor-pointer"
@@ -124,35 +131,50 @@ const EmotionGraphs = () => {
       </div>
 
       {expanded && (
-        <div className="space-y-8">
-          <div>
-            <h3 className="text-xl font-bold text-center mb-4">Arousal over Time</h3>
-            <div 
-              id="arousal-graph" 
-              className="w-full border rounded-lg bg-white p-6"
-              style={{ minHeight: '350px' }}
-            />
-          </div>
-          
-          <div>
-            <h3 className="text-xl font-bold text-center mb-4">Dominance over Time</h3>
-            <div 
-              id="dominance-graph" 
-              className="w-full border rounded-lg bg-white p-6"
-              style={{ minHeight: '350px' }}
-            />
-          </div>
-          
-          <div>
-            <h3 className="text-xl font-bold text-center mb-4">Valence over Time</h3>
-            <div 
-              id="valence-graph" 
-              className="w-full border rounded-lg bg-white p-6"
-              style={{ minHeight: '350px' }}
-            />
-          </div>
-        </div>
-      )}
+  <div className="space-y-8">
+    <div>
+      <div className="text-center mb-4">
+        <h3 className="text-xl font-bold mb-1">Arousal over Time</h3>
+        <p className="text-sm text-gray-600">
+          The intensity of emotional activation, ranging from calm to excited
+        </p>
+      </div>
+      <div 
+        id="arousal-graph" 
+        className="w-full border rounded-lg bg-white p-6"
+        style={{ minHeight: '350px' }}
+      />
+    </div>
+    
+    <div>
+      <div className="text-center mb-4">
+        <h3 className="text-xl font-bold mb-1">Dominance over Time</h3>
+        <p className="text-sm text-gray-600">
+          The level of control or influence expressed in speech
+        </p>
+      </div>
+      <div 
+        id="dominance-graph" 
+        className="w-full border rounded-lg bg-white p-6"
+        style={{ minHeight: '350px' }}
+      />
+    </div>
+    
+    <div>
+      <div className="text-center mb-4">
+        <h3 className="text-xl font-bold mb-1">Valence over Time</h3>
+        <p className="text-sm text-gray-600">
+          The degree of pleasantness or positivity in emotional expression
+        </p>
+      </div>
+      <div 
+        id="valence-graph" 
+        className="w-full border rounded-lg bg-white p-6"
+        style={{ minHeight: '350px' }}
+      />
+    </div>
+  </div>
+)}
     </div>
   );
 };
