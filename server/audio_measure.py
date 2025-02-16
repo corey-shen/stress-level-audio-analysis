@@ -61,10 +61,10 @@ class EmotionModel(Wav2Vec2PreTrainedModel):
 
 # load model from hub
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-if torch.cuda.is_available():
-    print(f"Using GPU: {torch.cuda.get_device_name()}")
-else:
-    print("Using CPU")
+# if torch.cuda.is_available():
+#     # print(f"Using GPU: {torch.cuda.get_device_name()}")
+# else:
+#     # print("Using CPU")
 model_name = 'audeering/wav2vec2-large-robust-12-ft-emotion-msp-dim'
 processor = Wav2Vec2Processor.from_pretrained(model_name)
 model = EmotionModel.from_pretrained(model_name).to(device)
@@ -108,7 +108,7 @@ def process_audio(audio, num_chunks, sampling_rate):
     chunk_samples = len(audio) // num_chunks
     chunks = []
     
-    print("Chunking audio...")
+    # print("Chunking audio...")
     for i in tqdm(range(num_chunks)):
         start = i * chunk_samples
         end = start + chunk_samples
@@ -130,7 +130,7 @@ def process_file(audio_path, num_chunks, alpha, beta, gamma):
     Returns:
         dict: Dictionary containing arrays of emotion values
     """
-    print("Loading audio file...")
+    # print("Loading audio file...")
     # Load audio file using soundfile with tqdm
     with sf.SoundFile(audio_path) as f:
         frames = len(f)
@@ -151,12 +151,12 @@ def process_file(audio_path, num_chunks, alpha, beta, gamma):
                 pbar.update(len(chunk))
     
     sr = f.samplerate
-    print(f"Original sample rate: {sr}")
+    # print(f"Original sample rate: {sr}")
     if sr != 16000:
-        print("Resampling audio to 16kHz...")
+        # print("Resampling audio to 16kHz...")
         audio = librosa.resample(audio, orig_sr=sr, target_sr=16000)
         sr = 16000
-    print(f"New sample rate: {sr}")
+    # print(f"New sample rate: {sr}")
     
     chunks = process_audio(audio, num_chunks, sr)
 
@@ -166,7 +166,7 @@ def process_file(audio_path, num_chunks, alpha, beta, gamma):
     stress_values = []
     three_d_values = []
     
-    print("Processing chunks...")
+    # print("Processing chunks...")
     for chunk in tqdm(chunks):
         results = process_func(chunk.reshape(1, -1), sr)[0]
         results = np.clip(results, 0, 1)   # clip
@@ -208,7 +208,7 @@ def main():
     # Process file and get stress values
     stress_values = process_file(args.audio_path, args.chunks, args.alpha, args.beta, args.gamma)
     print(stress_values)
-    return stress_values
+    # return stress_values
 
 if __name__ == "__main__":
     main()
