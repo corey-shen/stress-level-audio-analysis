@@ -97,6 +97,19 @@ const VideoRecorder = () => {
     }
   };
 
+//   const keyMoments1 = [
+//     "Describing a pleasant day, sun out, lying on grass",
+//     "Everything feels good - maintaining relaxed state",
+//     "Sudden shift in tone and content",
+//     "Witnessing a man being run over",
+//     "Expressing shock at the event.",
+//     "Focus on the injury (broken leg)",
+//     "Strong expression of distress - 'Oh my God'",
+//     "Expressing shock",
+//     "Witnessing a man being run over again",
+//     "Expressing shock"
+// ]
+
   const createGraph = (containerId, values, label, color) => {
     const safeValues = Array.isArray(values) ? values : [];
     d3.select(`#${containerId}`).selectAll('*').remove();
@@ -182,6 +195,8 @@ const VideoRecorder = () => {
   useEffect(() => {
     if (!stressScores) return;
     createGraph('stress-graph', stressScores, 'Stress Level', '#9C27B0');
+
+    // createGraph('stress-graph', [0.1, 0.1, 0.1, 0.7, 0.9, 0.9, 0.9, 0.8, 0.7, 0.7], 'Stress Level', '#9C27B0');
     
     // if (expanded) {
     //   setTimeout(() => {
@@ -225,7 +240,7 @@ const VideoRecorder = () => {
       </div>
     );
   };
-
+  
   return (
     <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
       <h2>Video Recorder</h2>
@@ -333,12 +348,6 @@ const VideoRecorder = () => {
             <p className="text-sm text-gray-600 mb-1">
             A measure of tension and pressure experienced during speech
             </p>
-            {/* <p className="text-sm text-gray-600">
-            [Click to {expanded ? 'collapse' : 'show all metrics'}]
-            </p> */}
-            {/* <button onClick={() => setExpanded(!expanded)} className="text-blue-600 hover:text-blue-800 text-sm">
-                {expanded ? 'Collapse' : 'Show All Metrics'}
-            </button> */}
         </div>
                 
         <div 
@@ -381,7 +390,3 @@ const buttonStyle = (color, disabled = false) => ({
 
 export default VideoRecorder;
 
-
-// return (
-    
-//   );

@@ -12,13 +12,6 @@ const AudioRecorder = () => {
   const mediaRecorderRef = useRef(null);             // Reference to MediaRecorder
   const audioChunksRef = useRef([]);                 // Store recorded audio chunks
 
-  // const [emotionData, setEmotionData] = useState({
-  //   arousal: [0,0,0,0,0,0,0,0,0,0],
-  //   dominance: [0,0,0,0,0,0,0,0,0,0],
-  //   valence: [0,0,0,0,0,0,0,0,0,0],
-  //   stress: [0,0,0,0,0,0,0,0,0,0],
-  //   three_d: [0,0,0,0,0,0,0,0,0,0]
-  // });
 
   const [emotionData, setEmotionData] = useState({
     arousal: new Array(10).fill(0),
