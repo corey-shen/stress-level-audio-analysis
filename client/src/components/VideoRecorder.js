@@ -197,14 +197,7 @@ const VideoRecorder = () => {
     createGraph('stress-graph', stressScores, 'Stress Level', '#9C27B0');
 
     // createGraph('stress-graph', [0.1, 0.1, 0.1, 0.7, 0.9, 0.9, 0.9, 0.8, 0.7, 0.7], 'Stress Level', '#9C27B0');
-    
-    // if (expanded) {
-    //   setTimeout(() => {
-    //     createGraph('arousal-graph', emotionData.arousal, 'Arousal Level', '#2196F3');
-    //     createGraph('dominance-graph', emotionData.dominance, 'Dominance Level', '#4CAF50');
-    //     createGraph('valence-graph', emotionData.valence, 'Valence Level', '#F44336');
-    //   }, 100);
-    // }
+
   }, [stressScores]);
 
   // Proper error rendering function

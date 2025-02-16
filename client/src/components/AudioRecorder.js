@@ -55,24 +55,7 @@ const AudioRecorder = () => {
       setRecording(false);
     }
   };
-
-  // // 📤 Upload Audio
-  // const uploadAudio = async () => {
-  //   if (!audioBlob) return alert("No audio recorded!");
-
-  //   const formData = new FormData();
-  //   formData.append("file", audioBlob, "recording.wav");
-
-  //   try {
-  //     const response = await axios.post("http://127.0.0.1:8000/process_audio", formData);
-  //     console.log("Upload successful:", response.data);
-  //     alert("Upload successful!");
-  //   } catch (error) {
-  //     console.error("Upload failed:", error);
-  //     alert("Upload failed!");
-  //   }
-  // };
-
+  
   const uploadAudio = async () => {
     if (!audioBlob) return alert("No audio recorded!");
   

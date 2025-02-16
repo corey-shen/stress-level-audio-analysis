@@ -57,6 +57,16 @@ SYSTEM_PROMPT = """You are an advanced emotional state analysis AI.
     "keyMoments": [string],   // Array of 10 explanations
     """
 
+AUDIO_SYSTEM_PROMPT = """You are an advanced emotional state analysis AI.
+
+Analyze the provided transcript of an audio recording of a person.
+Determine the person's stress level (0 = calm, 1 = highly stressed) averaged across 10 segments.
+Also, provide a parallel array with key moments that explain the changes in stress levels.
+Return your answer as a JSON object in the following format:
+"stressScores": [number, ...],  // Array of 10 scores between 0 and 1.
+"keyMoments": [string, ...]      // Array of 10 explanations.
+"""
+
 def parse_response(response_text):
     # Extract stress scores
     stress_scores_pattern = r'"stressScores":\s*\[([\d.,\s]+)\]'
@@ -84,6 +94,65 @@ def parse_response(response_text):
     }
     
     return formatted_response
+
+@app.post("/upload_transcript")
+async def upload_audio(file: UploadFile = File(...)):
+    TEMP_AUDIO_DIR = "temp_audios"
+    os.makedirs(TEMP_AUDIO_DIR, exist_ok=True)
+    
+    try:
+        # Validate file type: ensure it's an audio file.
+        if not file.content_type.startswith("audio/"):
+            raise HTTPException(status_code=400, detail="Invalid audio file format")
+        
+        # Save the uploaded audio file to a temporary location.
+        contents = await file.read()
+        with tempfile.NamedTemporaryFile(delete=False, suffix=Path(file.filename).suffix, dir=TEMP_AUDIO_DIR) as temp_file:
+            temp_file.write(contents)
+            temp_path = temp_file.name
+        
+        # Upload the audio file to Gemini's storage.
+        file_upload = client.files.upload(
+            file=temp_path
+        )
+
+        # Wait until the file is processed by Gemini's backend.
+        while file_upload.state == "PROCESSING":
+            print('Waiting for audio to be processed.')
+            time.sleep(10)
+            file_upload = client.files.get(name=file_upload.name)
+
+        if file_upload.state == "FAILED":
+            raise ValueError(file_upload.state)
+        
+        print(f'Audio processing complete: {file_upload.uri}')
+
+        # Call Gemini Flash 2.0 to analyze the audio recording.
+        response = client.models.generate_content(
+            model=MODEL_ID,
+            contents=[
+                types.Content(
+                    role="user",
+                    parts=[
+                        types.Part.from_uri(
+                            file_uri=file_upload.uri,
+                            mime_type=file_upload.mime_type),
+                    ]),
+                AUDIO_SYSTEM_PROMPT,
+            ],
+            config=types.GenerateContentConfig(
+                system_instruction=AUDIO_SYSTEM_PROMPT,
+                temperature=0.0,
+            ),
+        )
+        
+        parsed_data = parse_response(response.text)
+        return JSONResponse(content=parsed_data)
+        
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Processing failed: {str(e)}")
 
 @app.post("/upload_video")
 async def upload_video(file: UploadFile = File(...)):
@@ -219,16 +288,6 @@ async def process_audio_endpoint(file: UploadFile = File(...)):
                 "data": formatted_results
             }
         )
-
-        # formatted_results = convert_tuples_to_arrays(results)
-    
-        # return JSONResponse(content={
-        #     "status": "success",
-        #     "data": {
-        #         "results": formatted_results,
-        #         "filename": file.filename
-        #     }
-        # })
         
         return JSONResponse(content={"results": results, "filename": file.filename})
 
