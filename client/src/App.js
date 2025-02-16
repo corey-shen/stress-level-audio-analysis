@@ -12,7 +12,7 @@ const sampleData = {
 
 function App() {
   return (
-    <div>
+    <div className="App">
       <h1>Audio Stress Level Analyzer</h1>
       <AudioRecorder />    
       <EmotionGraph2D />

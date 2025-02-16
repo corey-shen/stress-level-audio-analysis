@@ -12,17 +12,18 @@ const EmotionGraphs = () => {
   const [expanded, setExpanded] = useState(false);
   
   const createGraph = (containerId, values, label, color) => {
-    // Clear previous content
     d3.select(`#${containerId}`).selectAll('*').remove();
 
-    const margin = { top: 20, right: 30, bottom: 30, left: 40 };
-    const width = 800 - margin.left - margin.right;
+    const margin = { top: 20, right: 50, bottom: 50, left: 60 };
+    const width = 700 - margin.left - margin.right;
     const height = 300 - margin.top - margin.bottom;
 
     const svg = d3.select(`#${containerId}`)
       .append('svg')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
+        .style('display', 'block')
+        .style('margin', '0 auto')
       .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
@@ -34,13 +35,37 @@ const EmotionGraphs = () => {
       .domain([0, 1])
       .range([height, 0]);
 
-    // Add axes
+    // Add X axis with label
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(xScale));
+      .call(d3.axisBottom(xScale))
+      .append('text')
+        .attr('class', 'axis-label')
+        .attr('x', width / 2)
+        .attr('y', 40)
+        .style('text-anchor', 'middle')
+        .style('fill', 'black')
+        .text('Time (s)');
 
+    // Add Y axis with label
     svg.append('g')
-      .call(d3.axisLeft(yScale));
+      .call(d3.axisLeft(yScale))
+      .append('text')
+        .attr('class', 'axis-label')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', -45)
+        .attr('x', -height / 2)
+        .style('text-anchor', 'middle')
+        .style('fill', 'black')
+        .text(label);
+
+    // Add grid lines
+    svg.append('g')
+      .attr('class', 'grid')
+      .attr('opacity', 0.1)
+      .call(d3.axisLeft(yScale)
+        .tickSize(-width)
+        .tickFormat(''));
 
     // Create line
     const line = d3.line()
@@ -67,59 +92,63 @@ const EmotionGraphs = () => {
         .attr('fill', color);
   };
 
-  // Create/update graphs whenever expanded state changes
   useEffect(() => {
-    createGraph('stress-graph', testData.stress, 'Stress', '#9C27B0');
+    createGraph('stress-graph', testData.stress, 'Stress Level', '#9C27B0');
     
     if (expanded) {
-      // Use setTimeout to ensure DOM elements are ready
       setTimeout(() => {
-        createGraph('arousal-graph', testData.arousal, 'Arousal', '#2196F3');
-        createGraph('dominance-graph', testData.dominance, 'Dominance', '#4CAF50');
-        createGraph('valence-graph', testData.valence, 'Valence', '#F44336');
+        createGraph('arousal-graph', testData.arousal, 'Arousal Level', '#2196F3');
+        createGraph('dominance-graph', testData.dominance, 'Dominance Level', '#4CAF50');
+        createGraph('valence-graph', testData.valence, 'Valence Level', '#F44336');
       }, 100);
     }
   }, [expanded]);
 
   return (
-    <div className="space-y-8 p-4">
-      <div onClick={() => setExpanded(!expanded)} className="cursor-pointer">
-        <h3 className="text-lg font-bold mb-4">
-          Stress over Time ({expanded ? 'Click to collapse' : 'Click to show all metrics'})
-        </h3>
+    <div className="container mx-auto">
+      <h3 className="text-xl font-bold text-center">
+        Stress over Time
+      </h3>
+      <p className="text-sm text-gray-600 text-center mb-4">
+        (Click to {expanded ? 'collapse' : 'show all metrics'})
+      </p>
+      <div 
+        onClick={() => setExpanded(!expanded)}
+        className="cursor-pointer"
+      >
         <div 
           id="stress-graph" 
-          className="w-full h-[300px] border rounded-lg bg-white p-4 mb-8"
-          style={{ minHeight: '300px' }}
+          className="w-full border rounded-lg bg-white p-6 mb-8"
+          style={{ minHeight: '350px' }}
         />
       </div>
 
       {expanded && (
         <div className="space-y-8">
           <div>
-            <h3 className="text-lg font-bold mb-4">Arousal over Time</h3>
+            <h3 className="text-xl font-bold text-center mb-4">Arousal over Time</h3>
             <div 
               id="arousal-graph" 
-              className="w-full h-[300px] border rounded-lg bg-white p-4"
-              style={{ minHeight: '300px' }}
+              className="w-full border rounded-lg bg-white p-6"
+              style={{ minHeight: '350px' }}
             />
           </div>
           
           <div>
-            <h3 className="text-lg font-bold mb-4">Dominance over Time</h3>
+            <h3 className="text-xl font-bold text-center mb-4">Dominance over Time</h3>
             <div 
               id="dominance-graph" 
-              className="w-full h-[300px] border rounded-lg bg-white p-4"
-              style={{ minHeight: '300px' }}
+              className="w-full border rounded-lg bg-white p-6"
+              style={{ minHeight: '350px' }}
             />
           </div>
           
           <div>
-            <h3 className="text-lg font-bold mb-4">Valence over Time</h3>
+            <h3 className="text-xl font-bold text-center mb-4">Valence over Time</h3>
             <div 
               id="valence-graph" 
-              className="w-full h-[300px] border rounded-lg bg-white p-4"
-              style={{ minHeight: '300px' }}
+              className="w-full border rounded-lg bg-white p-6"
+              style={{ minHeight: '350px' }}
             />
           </div>
         </div>
