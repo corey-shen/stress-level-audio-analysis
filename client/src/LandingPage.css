@@ -1,0 +1,79 @@
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;600&display=swap');
+
+/* Main Container */
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1); /* Subtle Glass Effect */
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  max-width: 600px;
+  width: 90%;
+}
+
+/* Title */
+.landing-container .landing-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+/* Tagline */
+.landing-container .landing-tagline {
+  font-size: 1.4rem;
+  font-weight: 400;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+/* Button Container */
+.landing-container .landing-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* Buttons */
+.landing-container .landing-button {
+  background: #00d4ff;
+  color: #1a1a40;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  outline: none;
+}
+
+.landing-container .landing-button:hover {
+  background: #4b0082;
+  color: white;
+  transform: scale(1.1);
+}
+
+.landing-container .landing-title, 
+.landing-container .landing-tagline {
+  color: white !important;
+}
+
+/* Apply initial global styles to html, body, and root */
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a40, #4b0082, #00d4ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  color: white;
+  margin: 0;  /*Reset Margin*/
+  padding: 0; /*Reset padding*/
+  box-sizing: border-box;
+}
