@@ -1,8 +1,8 @@
 import React from "react";
-import AudioRecorder from "./components/AudioRecorder.js";
-import EmotionGraph2D from "./components/EmotionGraph2D.js";
-import Scene3D from './components/Scene3D.js';
-import './App.css';
+import AudioRecorder from "./AudioRecorder.js";
+import EmotionGraph2D from "./EmotionGraph2D.js";
+import Scene3D from './Scene3D.js';
+import '../App.css';
 
 function AudioProcessing() {
   return (

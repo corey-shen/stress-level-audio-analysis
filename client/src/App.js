@@ -1,8 +1,8 @@
 import React from "react";
 import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LandingPage from "./LandingPage.js";
-import AudioProcessing from "./AudioProcessing.js";
+import LandingPage from "./components/LandingPage.js";
+import AudioProcessing from "./components/AudioProcessing.js";
 
 function App() {
   return (
