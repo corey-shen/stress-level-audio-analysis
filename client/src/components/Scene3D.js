@@ -6,26 +6,28 @@ import React from 'react'
 import * as THREE from 'three'
 import { useState } from 'react'
 
-const testData = {
-    arousal: [1.0, 0.5623, 0.8391, 0.587, 0.6122, 0.3325, 0.1177, 0.4345, 0.956, 0.8919],
-    dominance: [0.9571, 0.5887, 0.7914, 0.5969, 0.597, 0.4325, 0.2521, 0.5236, 0.9302, 0.9012],
-    valence: [0.2811, 0.4389, 0.3126, 0.513, 0.693, 0.346, 0.1785, 0.2195, 0.1624, 0.2003],
-    stress: [0.9495, 0.316, 0.6812, 0.3339, 0.3416, 0.1309, 0.033, 0.2171, 0.8934, 0.7807],
-    three_d: [
-        [0.1, 0.2811, 1.0],
-        [0.5887, 0.389, 0.5623],
-        [0.7914, 0.3126, 0.8391],
-        [0.169, 0.513, 0.587],
-        [0.697, 0.693, 0.6122],
-        [0.2325, 0.346, 0.3325],
-        [0.2521, 0.7785, 0.1177],
-        [0.5236, 0.2195, 0.1345],
-        [0.9302, 0.1624, 0.456],
-        [0.1012, 0.2003, 0.8919]
-    ]
-};
+// const testData = {
+//     arousal: [1.0, 0.5623, 0.8391, 0.587, 0.6122, 0.3325, 0.1177, 0.4345, 0.956, 0.8919],
+//     dominance: [0.9571, 0.5887, 0.7914, 0.5969, 0.597, 0.4325, 0.2521, 0.5236, 0.9302, 0.9012],
+//     valence: [0.2811, 0.4389, 0.3126, 0.513, 0.693, 0.346, 0.1785, 0.2195, 0.1624, 0.2003],
+//     stress: [0.9495, 0.316, 0.6812, 0.3339, 0.3416, 0.1309, 0.033, 0.2171, 0.8934, 0.7807],
+//     three_d: [
+//         [0.21, 0.2811, 1.0],
+//         [0.5887, 0.389, 0.5623],
+//         [0.7914, 0.3126, 0.8391],
+//         [0.169, 0.513, 0.587],
+//         [0.697, 0.693, 0.6122],
+//         [0.2325, 0.346, 0.3325],
+//         [0.2521, 0.7785, 0.1177],
+//         [0.5236, 0.2195, 0.1345],
+//         [0.9302, 0.1624, 0.456],
+//         [0.1012, 0.2003, 0.8919]
+//     ]
+// };
 
-function AxisVisualization({ zoom }) {
+function AxisVisualization({testData, zoom}) {
+  console.log("TESTDATAA", testData)
+  
   const meshRef = useRef()
   const isClicking = useRef(false)
   const previousMousePosition = useRef({ x: 0, y: 0 })
@@ -102,6 +104,7 @@ function AxisVisualization({ zoom }) {
   })
 
   React.useEffect(() => {
+    if (!testData) return;
     const handleMouseMove = (e) => {
       if (!isClicking.current) return
 
@@ -154,7 +157,9 @@ function AxisVisualization({ zoom }) {
 
   // Calculate dynamic font size based on zoom - linear scaling
   const fontSize = 0.2  // Linear scaling relative to zoom level
-
+  
+  
+  
   return (
     <group ref={meshRef} onPointerDown={handlePointerDown}>
       {/* Cube Edges */}
@@ -583,9 +588,23 @@ function AxisVisualization({ zoom }) {
   )
 }
 
-function Scene3D() {
-  const zoom = 60  // Fixed zoom value
+function Scene3D({testData}) {
+  const [zoom, setZoom] = useState(50)
 
+  const handleWheel = (e) => {
+    e.preventDefault()
+    setZoom(prevZoom => {
+      const newZoom = prevZoom - e.deltaY * 0.1
+      return Math.min(Math.max(newZoom, 20), 100)
+    })
+  }
+
+  // Return null if no testData is available
+  if (!testData || !testData.three_d) {
+    return null;
+  }
+
+  
   return (
     <div className="three-d-graph-container">
       <Canvas 
@@ -599,7 +618,7 @@ function Scene3D() {
       >
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
-        <AxisVisualization zoom={zoom} />
+        <AxisVisualization testData={testData} zoom={zoom} />
       </Canvas>
     </div>
   )

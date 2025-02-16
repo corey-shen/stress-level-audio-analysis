@@ -1,5 +1,9 @@
+
+// ---------------------------------------------------
 import React, { useState, useRef } from "react";
 import axios from "axios";
+import EmotionGraphs from "./EmotionGraph2D";
+import Scene3D from "./Scene3D";
 
 const AudioRecorder = () => {
   const [recording, setRecording] = useState(false); // Track if recording is active
@@ -7,6 +11,24 @@ const AudioRecorder = () => {
   const [audioURL, setAudioURL] = useState(null);    // Store audio playback URL
   const mediaRecorderRef = useRef(null);             // Reference to MediaRecorder
   const audioChunksRef = useRef([]);                 // Store recorded audio chunks
+
+  // const [emotionData, setEmotionData] = useState({
+  //   arousal: [0,0,0,0,0,0,0,0,0,0],
+  //   dominance: [0,0,0,0,0,0,0,0,0,0],
+  //   valence: [0,0,0,0,0,0,0,0,0,0],
+  //   stress: [0,0,0,0,0,0,0,0,0,0],
+  //   three_d: [0,0,0,0,0,0,0,0,0,0]
+  // });
+
+  const [emotionData, setEmotionData] = useState({
+    arousal: new Array(10).fill(0),
+    dominance: new Array(10).fill(0),
+    valence: new Array(10).fill(0),
+    stress: new Array(10).fill(0),
+    three_d: new Array(10).fill([0, 0, 0])  // For 3D coordinates
+  });
+
+  const [hasEmotionData, setHasEmotionData] = useState(false)
 
   // 🎙 Start Recording
   const startRecording = async () => {
@@ -41,22 +63,50 @@ const AudioRecorder = () => {
     }
   };
 
-  // 📤 Upload Audio
+  // // 📤 Upload Audio
+  // const uploadAudio = async () => {
+  //   if (!audioBlob) return alert("No audio recorded!");
+
+  //   const formData = new FormData();
+  //   formData.append("file", audioBlob, "recording.wav");
+
+  //   try {
+  //     const response = await axios.post("http://127.0.0.1:8000/process_audio", formData);
+  //     console.log("Upload successful:", response.data);
+  //     alert("Upload successful!");
+  //   } catch (error) {
+  //     console.error("Upload failed:", error);
+  //     alert("Upload failed!");
+  //   }
+  // };
+
   const uploadAudio = async () => {
     if (!audioBlob) return alert("No audio recorded!");
-
+  
     const formData = new FormData();
     formData.append("file", audioBlob, "recording.wav");
-
+  
     try {
       const response = await axios.post("http://127.0.0.1:8000/process_audio", formData);
       console.log("Upload successful:", response.data);
+      
+      // Update the state with the response data
+      setEmotionData({
+        arousal: response.data.data.arousal,
+        dominance: response.data.data.dominance,
+        valence: response.data.data.valence,
+        stress: response.data.data.stress,
+        three_d: response.data.data.three_d
+      });
+  
       alert("Upload successful!");
+      setHasEmotionData(true);
     } catch (error) {
       console.error("Upload failed:", error);
       alert("Upload failed!");
     }
   };
+  
 
   return (
     <div>
@@ -80,6 +130,17 @@ const AudioRecorder = () => {
       <button onClick={uploadAudio} disabled={!audioBlob} style={{ backgroundColor: "#dee2e6", color: "black", marginLeft: "10px" }}>
         Upload Audio
       </button>
+      {hasEmotionData && (
+        <EmotionGraphs 
+          emotionData={emotionData}
+        />
+      )}
+      {hasEmotionData && (
+        <Scene3D 
+            testData={emotionData}
+        />
+      )}
+      
     </div>
   );
 };

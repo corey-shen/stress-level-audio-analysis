@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./components/LandingPage.js";
 import AudioProcessing from "./components/AudioProcessing.js";
 import TranscriptProcessing from "./components/TranscriptProcessing.js";
+import VideoRecorder from "./components/VideoRecorder.js";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
                 <Route path="/audio" element={<AudioProcessing />} />
 
                 <Route path='/transcript' element={<TranscriptProcessing />} />
+                <Route path="/video" element={<VideoRecorder />} />
             </Routes>
         </BrowserRouter>
     </div>
